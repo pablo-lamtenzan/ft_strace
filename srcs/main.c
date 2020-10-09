@@ -6,7 +6,7 @@
 /*   By: plamtenz <plamtenz@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 19:27:43 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 00:18:23 by plamtenz         ###   ########.fr       */
+/*   Updated: 2020/10/10 00:22:42 by plamtenz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ static bool					exec_tracer(pid_t pid, const int8_t* execution_path)
 	signal(SIGINT, sigint);
 	/* PTRACE_SEIZE -> Attach to the process specified in pid, making it a tracee (does not stop the process). */
 	/* PTRACE_O_TRACESYSGOOD -> When delivering systhem call traps, set bit 7 in the signal number. This makes it easy
-		for the tracer to distinguish nomal traps from those caused by a systhem call (using: (SIGTRAP | 0x80)).*/
-	/* PTRACE_INTERRUPT -> Stop a tracee, If the tracee is running or sleeping in kernel space and PTRACE_SYSCALL is in
+		for the tracer to distinguish normal traps from those caused by a systhem call (using: (SIGTRAP | 0x80)).*/
+	/* PTRACE_INTERRUPT -> Stop a tracee, if the tracee is running or sleeping in kernel space and PTRACE_SYSCALL is in
 		effect, the systhem call is interrupted and syscall-exit-stop is reported */
 	if (ptrace(PTRACE_SEIZE, pid, 0L, PTRACE_O_TRACESYSGOOD) >= 0 \
 		&& ptrace(PTRACE_INTERRUPT, pid, 0L, 0L) >= 0)

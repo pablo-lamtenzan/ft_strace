@@ -6,7 +6,7 @@
 /*   By: plamtenz <plamtenz@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 21:47:46 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/09 22:39:59 by plamtenz         ###   ########.fr       */
+/*   Updated: 2020/10/10 00:24:31 by plamtenz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void				print_signals(pid_t pid, int32_t wstatus)
 	siginfo_t		info;
 	int32_t			wstopstatus;
 
-	/* PTRACE_GETSIGINFO -> Retrieve information about the signakl that caused the stop */
+	/* PTRACE_GETSIGINFO -> Retrieve information about the signal that caused the stop */
 	ptrace(PTRACE_GETSIGINFO, pid, 0L, &info);
 	/* WSTOPSIG -> Returns the number of the signal wicth caused the procee to stop */
 	if ((wstopstatus = WSTOPSIG(wstatus) > 0 && wstopstatus < 32))
