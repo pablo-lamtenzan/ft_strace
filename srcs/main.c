@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: plamtenz <plamtenz@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 19:27:43 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 18:29:02 by plamtenz         ###   ########.fr       */
+/*   Updated: 2020/10/10 23:29:12 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ static bool					exec_tracer(pid_t pid, const int8_t* execution_path)
 			/* wait until have the return value and store it */
 			wait_until_next_syscall(pid, NONE);
 			get_syscall_info(pid, &ret_cathed_syscall, &cathed_syscall, &registers);
+			/* print syscall and its arguments */
 			if ((once && cathed_syscall == __NR_execve && !(once = false)) || !once)
 				print_syscall(pid, &cathed_syscall, &registers);
 			write_possible_error(&ret_cathed_syscall);
