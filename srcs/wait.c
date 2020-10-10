@@ -6,12 +6,13 @@
 /*   By: plamtenz <plamtenz@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 20:37:22 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/09 23:39:48 by plamtenz         ###   ########.fr       */
+/*   Updated: 2020/10/10 18:27:28 by plamtenz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ft_strace.h>
 #include <tracee_signal.h>
+#include <print.h>
 #include <print.h>
 
 
@@ -41,10 +42,16 @@ int8_t			wait_until_next_syscall(pid_t pid, int32_t sigtrap)
 	while (42)
 	{
 		/* PTRACE_SYSCALL -> Restart the stopped tracee as for PTRACEE_CONT, but arrange for the 
-			tracee to bee stopped at the next entry to or exit from a systhem call or after execution
+			tracee to be stopped at the next entry to or exit from a systhem call or after execution
 			of a single instruction, respectively (the tracee will also, as usual, be stopped upon receit
 			of a signal). From the tracer's perspective, the tracee will appear to have been stoped by
-			receipt of a SIGTRAP. */
+			receipt of a SIGTRAP.
+			So, for PTRACE_SYSCALL, for
+            example, the idea is to inspect the arguments to the system call  at
+            the  first  stop, then do another PTRACE_SYSCALL and inspect the re‐
+            turn value of the system call at the second stop.  The data argument
+            is treated as for PTRACE_CONT.
+		*/
 		ptrace(PTRACE_SYSCALL, pid, 0L, 0L);
 		signwait(pid, &wstatus);
 		/* WIFSTOPPED -> returns true if the child process was stoped by delivey of a signal */

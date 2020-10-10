@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strace.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: plamtenz <plamtenz@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 19:29:30 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 00:00:15 by plamtenz         ###   ########.fr       */
+/*   Updated: 2020/10/10 23:03:02 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_STRACE_H
 # define FT_STRACE_H
+
+# ifndef __x86_64__
+# error ARCH NOT SUPPORTED
+# endif
 
 #define _GNU_SOURCE
 

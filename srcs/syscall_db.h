@@ -1,34 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tracee_signal.h                                    :+:      :+:    :+:   */
+/*   syscall_db.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/09 22:10:31 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 23:24:20 by pablo            ###   ########.fr       */
+/*   Created: 2020/10/10 19:04:08 by plamtenz          #+#    #+#             */
+/*   Updated: 2020/10/10 21:59:30 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TRACEE_SIGNAL_H
-# define TRACEE_SIGNAL_H
+#ifndef SYSCALL_DB_H
+# define SYSCALL_DB_H
 
-# ifndef pid_t
-	typedef int pid_t;
-# endif
+#include <stdint.h>
 
-# ifndef int32_t
-	typedef int int32_t;
-# endif
+typedef enum			e_args_type
+{
+	NONE,
+	INT,
+	UINT,
+	PTR,
+	STR,
+	STRUCT
+}						t_args_type;
 
-# ifndef int8_t
-	typedef char int8_t;
-# endif
+typedef struct			s_sys_data
+{
+	int8_t const*const		index;
+	int8_t					nb_args;
+	t_args_type				args[6];
+}						sys_data_t;
 
-bool					signwait(pid_t pid, int32_t* wstatus);
-bool					unblock_signals();
-bool					block_signals();
-int8_t					wait_until_next_syscall(pid_t pid, int32_t sigtrap);
-const char*				signal_db(int8_t index);
+const sys_data_t      syscall_db(int64_t *index);
 
 #endif

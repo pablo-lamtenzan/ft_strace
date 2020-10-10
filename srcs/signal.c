@@ -3,14 +3,53 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: plamtenz <plamtenz@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 20:43:18 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/09 23:18:11 by plamtenz         ###   ########.fr       */
+/*   Updated: 2020/10/10 23:23:06 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ft_strace.h>
+
+const char*		signal_db(int8_t index)
+{
+	const char*	db[64] = {
+		"",
+		"SIGHUP",
+		"SIGINT",
+		"SIGQUIT",
+		"SIGILL",
+		"SIGTRAP",
+		"SIGABRT",
+		"SIGBUS",
+		"SIGFPE",
+		"SIGKILL",
+		"SIGUSR1",
+		"SIGSEGV",
+		"SIGUSR2",
+		"SIGPIPE",
+		"SIGALRM",
+		"SIGTERM",
+		"SIGSTKFLT",
+		"SIGCHLD",
+		"SIGCONT",
+		"SIGSTOP",
+		"SIGTSTP",
+		"SIGTTIN",
+		"SIGTTOU",
+		"SIGURG",
+		"SIGXCPU",
+		"SIGXFSZ",
+		"SIGVTALRM",
+		"SIGPROF",
+		"SIGWINCH",
+		"SIGIO",
+		"SIGPWR",
+		"SIGSYS"
+	};
+	return (db[index - 1]);
+}
 
 bool			block_signals()
 {

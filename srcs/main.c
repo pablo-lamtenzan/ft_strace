@@ -6,13 +6,15 @@
 /*   By: plamtenz <plamtenz@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 19:27:43 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 00:22:42 by plamtenz         ###   ########.fr       */
+/*   Updated: 2020/10/10 18:29:02 by plamtenz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ft_strace.h>
 #include <tracee_signal.h>
+#include <print.h>
 #include <linux/unistd.h> /* __NR_execve */
+
 extern const char	*__progname;
 
 static void					sigint(int32_t sig)
@@ -20,22 +22,6 @@ static void					sigint(int32_t sig)
 	(void)sig;
 	dprintf(STDERR_FILENO, "%s: Process %d detached\n", __progname, g_pid);
 	exit(EXIT_SUCCESS);
-}
-
-static void					handle_possible_error(int64_t ret_syscall)
-{
-	if (ret_syscall != -ENOSYS)
-	{
-		if (ret_syscall != -512) // search the define of this
-		{
-			if (ret_syscall < 0)
-				dprintf(STDERR_FILENO, " = %d (%s)\n", -1, strerror(-ret_syscall));
-			else
-				dprintf(STDERR_FILENO, " = %ld (0x%lx)\n", ret_syscall, ret_syscall);
-		}
-		else
-			dprintf(STDERR_FILENO, " = ?\n");
-	}
 }
 
 static bool					exec_tracer(pid_t pid, const int8_t* execution_path)
@@ -49,7 +35,13 @@ static bool					exec_tracer(pid_t pid, const int8_t* execution_path)
 	free(execution_path);
 	/* enable ctrl + c */
 	signal(SIGINT, sigint);
-	/* PTRACE_SEIZE -> Attach to the process specified in pid, making it a tracee (does not stop the process). */
+	/* PTRACE_SEIZE -> Attach to the process specified in pid, making it a tracee (does not stop the process). 
+		Restart the stopped tracee as for PTRACEE_CONT, but arrange for the 
+		tracee to be stopped at the next entry to or exit from a systhem call or after execution
+		of a single instruction, respectively (the tracee will also, as usual, be stopped upon receit
+		of a signal). From the tracer's perspective, the tracee will appear to have been stoped by
+		receipt of a SIGTRAP
+	*/
 	/* PTRACE_O_TRACESYSGOOD -> When delivering systhem call traps, set bit 7 in the signal number. This makes it easy
 		for the tracer to distinguish normal traps from those caused by a systhem call (using: (SIGTRAP | 0x80)).*/
 	/* PTRACE_INTERRUPT -> Stop a tracee, if the tracee is running or sleeping in kernel space and PTRACE_SYSCALL is in
@@ -60,19 +52,23 @@ static bool					exec_tracer(pid_t pid, const int8_t* execution_path)
 		signwait(pid, &wstatus);
 		while (42)
 		{
+			/* wait until have the syscall arguments and store it*/
 			wait_until_next_syscall(pid, SIGTRAP);
 			get_syscall_info(pid, &ret_cathed_syscall, &cathed_syscall, &registers);
 			if (once && cathed_syscall == __NR_execve && !(once = false))
-				handle_possible_error(ret_cathed_syscall);
+				write_possible_error(&ret_cathed_syscall);
 			/* PTRACE_SEIZE -> Attach to the process specified in pid, making it a tracee (does not stop the process). */
 			ptrace(PTRACE_SEIZE, pid, 0L, PTRACE_O_TRACESYSGOOD);
+			/* wait until have the return value and store it */
 			wait_until_next_syscall(pid, NONE);
 			get_syscall_info(pid, &ret_cathed_syscall, &cathed_syscall, &registers);
 			if ((once && cathed_syscall == __NR_execve && !(once = false)) || !once)
-				print_syscall(pid, &ret_cathed_syscall, &cathed_syscall, &registers);// here i can only have pid and register as args
+				print_syscall(pid, &cathed_syscall, &registers);
+			write_possible_error(&ret_cathed_syscall);
 		}
+		return (true);
 	}
-	return (true);
+	return (false); // exit
 }
 
 static bool					exec_tracee(const int8_t* execution_path, const int8_t** av, int8_t** envp)
