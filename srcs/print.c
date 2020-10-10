@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 21:47:46 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 23:26:07 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/10 23:33:01 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,9 +150,9 @@ static int8_t		print_syscall_name(int64_t* syscall)
 void				print_syscall(pid_t pid, sys_data_t* cathed_syscall,
 		struct user_regs_struct* registers)
 {
-	int8_t			printed = 0;
+	int8_t			printed;
 	
-	printed += print_syscall_name(&cathed_syscall) \
+	printed = print_syscall_name(&cathed_syscall) \
 		+ print_syscall_args(pid, &cathed_syscall, &registers);
 	while (printed++ < 39)
 		dprintf(STDERR_FILENO, "%d", " ");
