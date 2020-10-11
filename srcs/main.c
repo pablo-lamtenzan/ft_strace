@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 19:27:43 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 23:29:12 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/11 15:26:17 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void					sigint(int32_t sig)
 	exit(EXIT_SUCCESS);
 }
 
-static bool					exec_tracer(pid_t pid, const int8_t* execution_path)
+static bool					exec_tracer(pid_t pid, const int8_t* tracee_path)
 {
 	int32_t					wstatus = 0;
 	int64_t					cathed_syscall = 0;
@@ -32,7 +32,7 @@ static bool					exec_tracer(pid_t pid, const int8_t* execution_path)
 	struct user_regs_struct	registers;
 	bool					once = true;
 	
-	free(execution_path);
+	free(tracee_path);
 	/* enable ctrl + c */
 	signal(SIGINT, sigint);
 	/* PTRACE_SEIZE -> Attach to the process specified in pid, making it a tracee (does not stop the process). 
@@ -72,35 +72,35 @@ static bool					exec_tracer(pid_t pid, const int8_t* execution_path)
 	return (false); // exit
 }
 
-static bool					exec_tracee(const int8_t* execution_path, const int8_t** av, int8_t** envp)
+static bool					exec_tracee(const int8_t* tracee_path, const int8_t** av, int8_t** envp)
 {
 	/* SIGSTOP -> stops the pid process in its current status and it will be resumed with SIGCONT */
 	kill(getpid(), SIGSTOP);
-	if (execve(execution_path, av + 1, envp) < 0)
+	if (execve(tracee_path, av + 1, envp) < 0)
 	{
-		free(execution_path);
+		free(tracee_path);
 		return (false); // exit error status here, error to handle
 	}
 	return (true);
 }
 
-static bool					routine(const int8_t* execution_path, const int8_t** av, int8_t** envp)
+static bool					routine(const int8_t* tracee_path, const int8_t** av, int8_t** envp)
 {
 	if (!(g_pid = fork()))
-		return (exec_tracee(execution_path, av, envp));
+		return (exec_tracee(tracee_path, av, envp));
 	else if (g_pid < 0)
 		return (false); // error fork have to handle
 	else
-		return (exec_tracer(execution_path, getpid()));
+		return (exec_tracer(tracee_path, getpid()));
 }
 
 int							main(int32_t ac, const int8_t** av, int8_t** envp)
 {
-	const int8_t*			execution_path;
+	const int8_t*			tracee_path;
 
 	if (ac < 2)
 		return (false); // error to handle
-	if (!(execution_path = get_execution_path(av[1])))
+	if (!(tracee_path = get_tracee_path(av[1])))
 		return (false); // error to handle
-	return (routine(execution_path, av, envp) ? 0 : 1);
+	return (routine(tracee_path, av, envp) ? 0 : 1);
 }

@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 22:10:31 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 23:24:20 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/10 23:38:05 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@
 # endif
 
 bool					signwait(pid_t pid, int32_t* wstatus);
-bool					unblock_signals();
-bool					block_signals();
 int8_t					wait_until_next_syscall(pid_t pid, int32_t sigtrap);
 const char*				signal_db(int8_t index);
 
