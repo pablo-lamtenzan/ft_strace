@@ -3,38 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   wait.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: plamtenz <plamtenz@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 20:37:22 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 18:27:28 by plamtenz         ###   ########.fr       */
+/*   Updated: 2020/10/13 00:18:50 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ft_strace.h>
 #include <tracee_signal.h>
+#include <ft_strace.h>
 #include <print.h>
 #include <print.h>
+#include <string.h>
+#include <ft_error.h>
 
-
-bool		signwait(pid_t pid, int32_t* wstatus)
+bool		signwait(pid_t tracee, int32_t* wstatus)
 {
 	if (!unblock_signals())
-	{
-		exit(EXIT_FAILURE); // error to handle
-		return (false);
-	}
-	waitpid(pid, wstatus, NULL);
+		return (error_exit("Error: unblock_signals failed"));
+	waitpid (tracee, wstatus, 0);
 	if (!block_signals())
-	{
-		exit(EXIT_FAILURE); // error to handle
-		return (false);
-	}
+		return (error_exit("Error: block_signals failed"));
 	return (true);
 }
 
 /* Inf loop until a syscall stops, print the signals between the syscalls, 
 	checks if the child has been killed or exited and print it */
-int8_t			wait_until_next_syscall(pid_t pid, int32_t sigtrap)
+char			wait_until_next_syscall(pid_t tracee, int32_t sigtrap)
 {
 	int32_t		wstatus;
 	int32_t		wstopstatus;
@@ -52,12 +47,15 @@ int8_t			wait_until_next_syscall(pid_t pid, int32_t sigtrap)
             turn value of the system call at the second stop.  The data argument
             is treated as for PTRACE_CONT.
 		*/
-		ptrace(PTRACE_SYSCALL, pid, 0L, 0L);
-		signwait(pid, &wstatus);
+		ptrace(PTRACE_SYSCALL, tracee, 0L, 0L);
+		signwait (tracee, &wstatus);
 		/* WIFSTOPPED -> returns true if the child process was stoped by delivey of a signal */
 		/* WSTOPSIG -> returns the number of the signal wicth caused the child to stop */
 		if (WIFSTOPPED(wstatus) && WSTOPSIG(wstatus) & (sigtrap | 0x80))
+		{
+			//dprintf(2, "CATCH SYSCALL RET OT CALL\n");
 			return (true);
+		}
 		/* WIFEXITED -> returns true if the child process has exited normally */
 		if (WIFEXITED(wstatus))
 		{
@@ -67,10 +65,10 @@ int8_t			wait_until_next_syscall(pid_t pid, int32_t sigtrap)
 			return (true);
 		}
 		else
-			print_signals(pid, wstatus);
-		if (tracee_killed(pid, wstatus))
+			print_signals (tracee, wstatus);
+		if (tracee_killed(wstatus))
 		{
-			kill(pid, wstopstatus = WSTOPSIG(wstatus));
+			kill (tracee, wstopstatus = WSTOPSIG(wstatus));
 			wstopstatus < 32 ? PRINT_SIGNALS : PRINT_REAL_TIME_SIGNALS;
 			dprintf(STDERR_FILENO, "%s\n", strsignal(WSTOPSIG(wstatus)));
 			exit(EXIT_SUCCESS);

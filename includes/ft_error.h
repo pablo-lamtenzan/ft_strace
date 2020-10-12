@@ -1,37 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   syscall_db.h                                       :+:      :+:    :+:   */
+/*   ft_error.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/10 19:04:08 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/12 17:52:54 by pablo            ###   ########.fr       */
+/*   Created: 2020/10/12 18:26:14 by pablo             #+#    #+#             */
+/*   Updated: 2020/10/12 21:58:31 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SYSCALL_DB_H
-# define SYSCALL_DB_H
+#ifndef FT_ERROR_H
+# define FT_ERROR_H
 
-#include <stdint.h>
+#include <stdbool.h>
 
-typedef enum			e_args_type
-{
-	NONE,
-	INT,
-	UINT,
-	PTR,
-	STR,
-	STRUCT
-}						t_args_type;
-
-typedef struct			s_sys_data
-{
-	char const*const		index;
-	char					nb_args;
-	t_args_type				args[6];
-}						sys_data_t;
-
-sys_data_t      		syscall_db(int64_t *index);
+bool        error_exit(char *msg);
+void        *ptr_error_exit(char *msg);
 
 #endif

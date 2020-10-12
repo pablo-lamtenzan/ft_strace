@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 20:43:18 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 23:23:06 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/12 17:50:39 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ bool			block_signals()
 	sigset_t	set;
 	
 	/*	SIGINT == Interrumpt from the keyboard
-		SIGQUIT == Quit from keyborad
+		SIGQUIT == Quit from keyboard
 		SIGTERM == Default action is to terminate the process
 		SIGPIPE == Broken pipe (write to pipe with no readers)
 		SIGHUP == Hangup detected on controlling terminal or 
@@ -84,7 +84,7 @@ bool			unblock_signals()
 }
 
 
-bool			tracee_killed(pid_t pid, int32_t wstatus)
+bool			tracee_killed(int32_t wstatus)
 {
 	/* WSTOPSIG -> Returns the number of the signal wicth caused the procee to stop. */
 	/*

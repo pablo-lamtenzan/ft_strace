@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: plamtenz <plamtenz@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 22:02:15 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 18:29:45 by plamtenz         ###   ########.fr       */
+/*   Updated: 2020/10/12 23:57:53 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #define PRINT_REAL_TIME_SIGNALS		dprintf(2, "+++ killed by SIGRT_%d +++\n", WEXITSTATUS(wstatus) - 32)
 
 void								print_signals(pid_t pid, int32_t wstatus);
-void								write_possible_error(int64_t ret_syscall);
+void								print_return_value(int64_t ret_syscall);
 void								print_syscall(pid_t pid, int64_t* cathed_syscall,
 		struct user_regs_struct* registers);
 

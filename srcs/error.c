@@ -1,37 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   syscall_db.h                                       :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/10 19:04:08 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/12 17:52:54 by pablo            ###   ########.fr       */
+/*   Created: 2020/10/12 18:22:22 by pablo             #+#    #+#             */
+/*   Updated: 2020/10/12 19:00:30 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SYSCALL_DB_H
-# define SYSCALL_DB_H
+#include <unistd.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#include <stdint.h>
-
-typedef enum			e_args_type
+bool        error_exit(char *msg)
 {
-	NONE,
-	INT,
-	UINT,
-	PTR,
-	STR,
-	STRUCT
-}						t_args_type;
+    dprintf(STDERR_FILENO, "%s\n", msg);
+    exit(EXIT_FAILURE);
+    return (false);
+}
 
-typedef struct			s_sys_data
+void        *ptr_error_exit(char *msg)
 {
-	char const*const		index;
-	char					nb_args;
-	t_args_type				args[6];
-}						sys_data_t;
-
-sys_data_t      		syscall_db(int64_t *index);
-
-#endif
+    dprintf(STDERR_FILENO, "%s\n", msg);
+    exit(EXIT_FAILURE);
+    return (NULL);
+}

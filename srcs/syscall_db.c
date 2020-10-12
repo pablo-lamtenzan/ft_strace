@@ -6,13 +6,13 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/10 18:58:07 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/10 21:59:11 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/12 17:14:11 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <syscall_db.h>
 
-const sys_data_t      syscall_db(int64_t *index)
+sys_data_t      syscall_db(int64_t *index)
 {
     const sys_data_t  db[333] = {
     {.index="read", .nb_args=3, .args={INT,PTR,UINT,NONE,NONE,NONE}},
