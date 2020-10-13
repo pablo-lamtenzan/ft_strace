@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 20:37:22 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/13 00:18:50 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/13 18:49:47 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ bool		signwait(pid_t tracee, int32_t* wstatus)
 char			wait_until_next_syscall(pid_t tracee, int32_t sigtrap)
 {
 	int32_t		wstatus;
-	int32_t		wstopstatus;
 
 	while (42)
 	{
@@ -65,13 +64,14 @@ char			wait_until_next_syscall(pid_t tracee, int32_t sigtrap)
 			return (true);
 		}
 		else
-			print_signals (tracee, wstatus);
+			print_signals(tracee, wstatus);
 		if (tracee_killed(wstatus))
 		{
-			kill (tracee, wstopstatus = WSTOPSIG(wstatus));
-			wstopstatus < 32 ? PRINT_SIGNALS : PRINT_REAL_TIME_SIGNALS;
+			kill (tracee, WSTOPSIG(wstatus));
+			WSTOPSIG(wstatus) < 32 ? PRINT_SIGNALS : PRINT_REAL_TIME_SIGNALS;
 			dprintf(STDERR_FILENO, "%s\n", strsignal(WSTOPSIG(wstatus)));
 			exit(EXIT_SUCCESS);
+			return (true);
 		}
 	}
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 19:27:43 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/13 00:18:27 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/13 20:04:53 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,7 @@ static bool					exec_tracer(pid_t tracee, char* tracee_path)
 	bool					once = true;
 	
 	free(tracee_path);
-	/* enable ctrl + c */
-	signal(SIGINT, sigint);
+	signal(SIGINT, &sigint);
 	/* PTRACE_SEIZE -> Attach to the process specified in pid, making it a tracee (does not stop the process). 
 		Restart the stopped tracee as for PTRACEE_CONT, but arrange for the 
 		tracee to be stopped at the next entry to or exit from a systhem call or after execution
@@ -56,24 +55,23 @@ static bool					exec_tracer(pid_t tracee, char* tracee_path)
 		while (42)
 		{
 			/* wait until have the syscall arguments and store it*/
-			wait_until_next_syscall(tracee, ARGUMENTS);
-			get_syscall_info(tracee, &ret_cathed_syscall, &cathed_syscall, &registers);
-			
-			//dprintf(2, "DATA IN ARG IS: sys: [%d] ---- ret: [%d] ---\n", cathed_syscall, ret_cathed_syscall);
-			
-			// wrong af cond -> if (once && cathed_syscall == __NR_execve && !(once = false))
-			print_return_value(ret_cathed_syscall);
-			/* PTRACE_SEIZE -> Attach to the process specified in pid, making it a tracee (does not stop the process). */
+			wait_until_next_syscall(tracee, GET_ARGUMENTS);
+			/* store return value and syscall index */
+			get_syscall_info(tracee, &ret_cathed_syscall, &cathed_syscall, &registers);			
+			if (once && cathed_syscall == __NR_execve)
+				once = false;
+			/* print return value of the syscall (if return != -38) */
+			if (!once)
+				print_return_value(ret_cathed_syscall);
 			ptrace(PTRACE_SEIZE, tracee, 0L, PTRACE_O_TRACESYSGOOD);
 			/* wait until have the return value and store it */
-			wait_until_next_syscall(tracee, RETURN);
-			get_syscall_info(tracee, &ret_cathed_syscall, &cathed_syscall, &registers);
-
-			//dprintf(2, "DATA IN RET IS: sys: [%d] ---- ret: [%d] ---\n", cathed_syscall, ret_cathed_syscall);
-			
+			wait_until_next_syscall(tracee, GET_RETURN);
+			/* store return value and syscall index */
+			get_syscall_info(tracee, &ret_cathed_syscall, &cathed_syscall, &registers);			
 			/* print syscall and its arguments */
-			//if ((once && cathed_syscall == __NR_execve && !(once = false)) || !once)
+			if ((once && cathed_syscall == __NR_execve && !(once = false)) || !once)
 				print_syscall(tracee, &cathed_syscall, &registers);
+			/* print return value of the syscall (if return != -38) */
 			print_return_value(ret_cathed_syscall);
 		}
 		return (true);
@@ -83,7 +81,7 @@ static bool					exec_tracer(pid_t tracee, char* tracee_path)
 
 static bool					exec_tracee(char* tracee_path, char** av, char** envp)
 {
-	/* SIGSTOP -> stops the pid process in its current status and it will be resumed with SIGCONT */
+	/* SIGSTOP -> stops the pid process in its current status and it will be resumed with CONT signal */
 	kill(getpid(), SIGSTOP);
 	if (execve(tracee_path, av + 1, envp) < 0)
 	{

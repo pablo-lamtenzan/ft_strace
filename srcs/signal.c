@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 20:43:18 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/12 17:50:39 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/13 19:17:07 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ const char*		signal_db(int8_t index)
 		"SIGPWR",
 		"SIGSYS"
 	};
-	return (db[index - 1]);
+	return (db[index]);
 }
 
 bool			block_signals()
@@ -64,11 +64,11 @@ bool			block_signals()
 		sigprocmask with "how" as SIG_BLOCK -> Signals in set are blocked
 	*/
 	return (!(sigemptyset(&set) \
+			|| sigaddset(&set, SIGHUP) \
 			|| sigaddset(&set, SIGINT) \
 			|| sigaddset(&set, SIGQUIT) \
-			|| sigaddset(&set, SIGTERM) \
 			|| sigaddset(&set, SIGPIPE) \
-			|| sigaddset(&set, SIGHUP) \
+			|| sigaddset(&set, SIGTERM) \
 			|| sigprocmask(SIG_BLOCK, &set, NULL)));
 }
 

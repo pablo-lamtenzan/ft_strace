@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 21:47:46 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/13 00:15:51 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/13 19:29:05 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,10 @@ static char		print_syscall_arg(pid_t tracee, t_args_type type, int32_t index,
 		return ((char)dprintf(STDERR_FILENO, "0x%lx", ((uint64_t*)registers)[index]));
 	else if (type == STRUCT && ((uint64_t*)registers)[index])
 		return ((char)dprintf(STDERR_FILENO, "{ 0x%lx }", ((uint64_t*)registers)[index]));
-	else if (type == STRUCT || type == PTR)
+	else if (type == STRUCT)
 		return ((char)dprintf(STDERR_FILENO, "{ NULL }"));
+	else if (type == PTR)
+		return ((char)dprintf(STDERR_FILENO, "NULL"));
 	else /* STR */
 	{
 		if (!(string_data = calloc(1, 33)))
@@ -158,7 +160,6 @@ void				print_syscall(pid_t tracee, int64_t* cathed_syscall,
 {
 	char			printed;
 	
-	dprintf(2, "REGISTERS ARE: %d -- %d -- %d -- %d -- %d -- %d \n", registers->rdi, registers->rsi, registers->r10, registers->r8, registers->r9);
 	printed = print_syscall_name(cathed_syscall) + print_syscall_args (tracee, cathed_syscall, registers);
 	while (printed++ < 39)
 		dprintf(STDERR_FILENO, "%s", " ");

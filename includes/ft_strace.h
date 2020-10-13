@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/09 19:29:30 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/12 18:10:25 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/13 18:51:37 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@
 #include <sys/ptrace.h>
 #include <errno.h>
 
-#define ARGUMENTS					SIGTRAP
-#define RETURN 						0
+#define GET_ARGUMENTS					SIGTRAP
+#define GET_RETURN 						0
 #define EXIT_STATUS 				" = ?\n+++ exited with %d +++\n"
 
 char*         		get_tracee_path(char* binary_name);

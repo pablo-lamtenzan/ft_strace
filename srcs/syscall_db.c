@@ -6,7 +6,7 @@
 /*   By: pablo <pablo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/10 18:58:07 by plamtenz          #+#    #+#             */
-/*   Updated: 2020/10/12 17:14:11 by pablo            ###   ########.fr       */
+/*   Updated: 2020/10/13 19:15:55 by pablo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 sys_data_t      syscall_db(int64_t *index)
 {
     const sys_data_t  db[333] = {
-    {.index="read", .nb_args=3, .args={INT,PTR,UINT,NONE,NONE,NONE}},
+    {.index="read", .nb_args=3, .args={INT,PTR,UINT,NONE,NONE,NONE } },
     {.index="write", .nb_args=3, .args={UINT,PTR,UINT,NONE,NONE,NONE } },
 	{.index="open", .nb_args=3, .args={STR,INT,INT,NONE,NONE,NONE } },
 	{.index="close", .nb_args=1, .args={INT,NONE,NONE,NONE,NONE,NONE } },
@@ -350,5 +350,5 @@ sys_data_t      syscall_db(int64_t *index)
 	{.index="pkey_free", .nb_args=1, .args={INT,NONE,NONE,NONE,NONE,NONE } },
 	{.index="statx", .nb_args=5, .args={INT,STR,INT,UINT,STRUCT,NONE } }
     };
-    return (db[*index - 1]);
+    return (db[*index]);
 }
